@@ -1,0 +1,238 @@
+{
+  "name": "Lab Calbuco",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7a4fb535-dcbb-4113-bd7b-a4c6c315ef17",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { documento: 'OC-9102', monto_total: 320000 } },\n  { json: { documento: 'Factura 4521', monto_total: 1250000 } },\n  { json: { documento: 'Corrupto', monto_total: null } },\n  { json: { documento: 'Borde', monto_total: 500000 } },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "cf13b194-9cea-4709-94da-d8f7917625ee",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8fb0c73b-a4e3-4941-9c3d-8152607aa93f",
+              "name": "Estado Contingencia",
+              "value": "Contingencia",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        688,
+        176
+      ],
+      "id": "28b1e216-cffb-48bd-bbc5-9eb5206c1bd0",
+      "name": "Contingencia"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "e8cf32e3-d916-4fac-80a3-71745601071d",
+              "leftValue": "={{ $json.monto_total }}",
+              "rightValue": 500000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        672,
+        -96
+      ],
+      "id": "5c4d85db-4843-42db-8e06-249bf576f9d9",
+      "name": "mayor 500000"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "00ba1688-1012-4af8-9f75-902680fe18f7",
+              "leftValue": "={{ $json.monto_total }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "48659cb4-c0e2-4886-86ef-7f30586184a4",
+      "name": "Existe?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1f483986-5630-46a8-a3a3-ac84bbc14d8d",
+              "name": "Estado Pendiente",
+              "value": "Pendiente",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        896,
+        -192
+      ],
+      "id": "e994ab54-0936-4be4-b3d8-bc7cd5d06783",
+      "name": "mayor a 500000"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8ecc6287-44a3-49da-9cd3-844216fa765e",
+              "name": "Estado Aprobado",
+              "value": "Aprobado",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        896,
+        0
+      ],
+      "id": "b1acfee3-7539-4cb4-bcf5-04060841a03c",
+      "name": "Menor a 500000"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Existe?": {
+      "main": [
+        [
+          {
+            "node": "mayor 500000",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contingencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mayor 500000": {
+      "main": [
+        [
+          {
+            "node": "mayor a 500000",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Menor a 500000",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "bd09197c-c7b8-4920-b255-0579388e71f0",
+  "meta": {
+    "instanceId": "4eaf6d338403709a5727f3e2bf82f2bed8d8783d9f8b98f6bb0c5b7560b4522b"
+  },
+  "nodeGroups": [],
+  "id": "4q3jCqa3ZMLKJgv5",
+  "tags": []
+}
